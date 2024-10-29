@@ -1,0 +1,40 @@
+<script>
+    $(document).ready(function () {
+        let scanTimeout; // Timeout variable to delay processing of the input
+        const debounceDelay = 200; // Delay in milliseconds, adjust based on scanner speed
+
+        $('#scanner-input').on('input', function () {
+            // Clear previous timeout to reset debounce period
+            clearTimeout(scanTimeout);
+
+            // Capture full input value after the debounce delay
+            scanTimeout = setTimeout(() => {
+                const data = $(this).val();
+                console.log('Full Scanned Data:', data);
+
+                // Display the full scanned data
+                $('#scanned-data').text(data);
+
+                // Send data to the backend for processing
+                $.ajax({
+                    url: '/scan',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ data: data }),
+                    success: function (result) {
+                        console.log(result);
+                    },
+                    error: function (error) {
+                        console.error('Error:', error);
+                    }
+                });
+                                 // Clear the input field after capturing the scan
+                                 $(this).val('');
+                }, debounceDelay);
+            });
+        });
+    </script>
+
+<div class="footer">
+    <p>Nothnagel Tech Solutions @ <%= currentYear%></p>
+</div>
